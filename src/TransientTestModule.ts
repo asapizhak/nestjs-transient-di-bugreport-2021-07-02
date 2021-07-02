@@ -29,8 +29,8 @@ export class DeepTransient {
   }
 
   method() {
-    return `DeepTransient method says hello!\n
-    \n>>> DeepTransient field, are you alive? >> ${this.field} <<<\n`;
+    return `DeepTransient method works and says hello!\n` +
+    `>>> DeepTransient field, are you alive? >> ${this.field} <<<\n`;
   }
 }
 
@@ -54,10 +54,6 @@ export class NestedTransient {
     console.log('What about properties?');
     console.log(`${this.deepTransient.method()}`);
     console.log(`NestedTransient constructor end`);
-  }
-
-  checkField() {
-    return this.deepTransient.method();
   }
 }
 
