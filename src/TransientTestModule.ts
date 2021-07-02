@@ -44,7 +44,7 @@ export class NestedTransient {
     private readonly deepTransient: DeepTransient
   ) {
     console.log(`NestedTransient constructor start`);
-    console.log(`\nDeepTransient created?: ${!!deepTransient}. Is it right instance? ${
+    console.log(`\nDeepTransient created?: ${!!deepTransient}. Is it instance of right class? ${
       deepTransient instanceof DeepTransient
     }`);
 
