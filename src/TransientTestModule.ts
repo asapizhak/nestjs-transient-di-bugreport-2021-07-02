@@ -3,6 +3,16 @@ import { Injectable, Module, OnModuleInit, Scope } from "@nestjs/common";
 
 
 let deepCtorCalled = false;
+let veryDeepCtorCalled = false;
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class VeryDeepTransient {
+
+  constructor() {
+    console.log('VeryDeepTransient constructor, I WANT TO BE CALLED TOO!');
+    veryDeepCtorCalled = true;
+  }
+}
 
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -10,7 +20,9 @@ export class DeepTransient {
 
   field = 'Alive via init!';
 
-  constructor() {
+  constructor(
+    private readonly veryDeepTransient: VeryDeepTransient
+  ) {
     console.log('DeepTransient constructor, I WANT TO BE CALLED!');
     this.field = 'Alive via constructor';
     deepCtorCalled = true;
@@ -31,15 +43,17 @@ export class NestedTransient {
   constructor(
     private readonly deepTransient: DeepTransient
   ) {
-    console.log(`NestedTransient constructor`);
-    console.log(`Dependency created?: ${!!deepTransient}. Is it right instance? ${
+    console.log(`NestedTransient constructor start`);
+    console.log(`\nDeepTransient created?: ${!!deepTransient}. Is it right instance? ${
       deepTransient instanceof DeepTransient
     }`);
 
-    console.log(`\n>>> Was dependency constructor called? >> ${deepCtorCalled} <<<\n`);
+    console.log(`\n>>> Was VeryDeepTransient constructor called? >> ${veryDeepCtorCalled} <<<`);
+    console.log(`>>> Was DeepTransient constructor called? >> ${deepCtorCalled} <<<\n`);
 
     console.log('What about properties?');
     console.log(`${this.deepTransient.method()}`);
+    console.log(`NestedTransient constructor end`);
   }
 
   checkField() {
@@ -58,7 +72,7 @@ export class MyService implements OnModuleInit {
   }
 
   someWork() {
-    console.log(`MyService ${deepCtorCalled ? 'is happy!' : 'cries :\'('}`);
+    console.log(`MyService ${deepCtorCalled &&  veryDeepCtorCalled ? 'is happy!' : 'cries :\'('}`);
   }
 
   onModuleInit() {
@@ -71,7 +85,8 @@ export class MyService implements OnModuleInit {
   providers: [
     MyService,
     NestedTransient,
-    DeepTransient
+    DeepTransient,
+    VeryDeepTransient
   ]
 })
 export class TransientTestModule{}
